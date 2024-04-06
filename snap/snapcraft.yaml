@@ -10,13 +10,13 @@ architectures:
 
 
 slots:
-  wike:
+  color-code:
     interface: dbus
     bus: session
     name: com.oyajun.ColorCode
 
 parts:
-  wike:
+  color-code:
     # See 'snapcraft plugins'
     plugin: meson
     source: https://github.com/oyajun/color-code.git
