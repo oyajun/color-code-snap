@@ -1,74 +1,44 @@
-name: wike # you probably want to 'snapcraft register <name>'
+name: color-code # you probably want to 'snapcraft register <name>'
 base: core22 # the base snap is the execution environment for this snap
-adopt-info: wike
+adopt-info: color-code
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 architectures:
   - build-on: amd64
   - build-on: armhf
   - build-on: arm64
-layout:
-  /usr/lib/$CRAFT_ARCH_TRIPLET/webkitgtk-6.0:
-    bind: $SNAP/webkitgtk-platform/usr/lib/$CRAFT_ARCH_TRIPLET/webkitgtk-6.0
+
 
 slots:
   wike:
     interface: dbus
     bus: session
-    name: com.github.hugolabe.Wike
+    name: com.oyajun.ColorCode
 
 parts:
   wike:
     # See 'snapcraft plugins'
     plugin: meson
-    source: https://github.com/hugolabe/Wike.git
-    source-tag: '3.0.1'
+    source: https://github.com/oyajun/color-code.git
+    source-tag: 'v0.1.0'
     source-depth: 1
     meson-parameters:
-      - --prefix=/snap/wike/current/usr
-    build-environment:
-      - PATH: /snap/webkitgtk-sdk/current/usr/bin:$PATH
-      - XDG_DATA_DIRS: /snap/webkitgtk-sdk/current/usr/share:$XDG_DATA_DIRS
-      - LD_LIBRARY_PATH: /snap/webkitgtk-sdk/current/usr/lib:/snap/webkitgtk-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET:/snap/webkitgtk-sdk/current/usr/lib/webkitgtk-6.0:/snap/webkitgtk-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/girepository-1.0:$LD_LIBRARY_PATH
+      - --prefix=/snap/color-code/current/usr
     stage-packages:
       - python3-dbus
-      - libjpeg9
-    build-snaps:
-      - webkitgtk-6-gnome-2204-sdk/latest/edge
-    override-pull: |
-      craftctl default
-      patch -p1 < $CRAFT_PROJECT_DIR/wike.patch
-      pip install --prefix=$CRAFT_PART_INSTALL/usr requests==2.28.1
-    override-build: |
-      craftctl default
-      mkdir -p $CRAFT_PART_INSTALL/meta/gui
-      cp -r $CRAFT_PART_INSTALL/snap/wike/current/usr/share/icons $CRAFT_PART_INSTALL/meta/gui/
-      for i in `find $CRAFT_PART_INSTALL/meta/gui/icons -name "*.svg" -o -name "*.png"`; do
-        mv $i "`dirname $i`/snap.$CRAFT_PROJECT_NAME.`basename $i`"
-      done
-    parse-info: [ usr/share/metainfo/com.github.hugolabe.Wike.metainfo.xml ]
+    parse-info: [ usr/share/metainfo/com.oyajun.ColorCode.metainfo.xml ]
     organize:
       usr/local: usr
-      snap/wike/current: .
+      snap/color-code/current: .
       usr/lib/python3: usr/lib/python3.10
 
-plugs:
-  webkitgtk-6-gnome-2204:
-    interface: content
-    target: $SNAP/webkitgtk-platform
-    default-provider: webkitgtk-6-gnome-2204
-
 apps:
-  wike:
-    command: usr/bin/wike
+  color-code:
+    command: usr/bin/color-code
     extensions: [gnome]
     environment:
       PYTHONPATH: ${SNAP}/usr/lib/python3.10/dist-packages:$PYTHONPATH
-      LD_LIBRARY_PATH: $SNAP/webkitgtk-platform/usr/lib:$SNAP/webkitgtk-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      GI_TYPELIB_PATH: $SNAP/webkitgtk-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/girepository-1.0:$GI_TYPELIB_PATH
     plugs:
-      - audio-playback
       - unity7
-      - network
-      - network-status
-    common-id: com.github.hugolabe.Wike
+    common-id: com.oyajun.ColorCode
+
